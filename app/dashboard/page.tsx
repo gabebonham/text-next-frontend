@@ -42,7 +42,7 @@ export default function DashboardPage() {
         <div className="flex h-fit flex-col justify-center px-12 ">
           <ScrollArea className="max-h-[700px] overflow-y-auto">
             <div className="flex flex-col gap-y-6">
-              {forms.map((currentForm: FormEntity) => (
+              {forms&&forms.map((currentForm: FormEntity) => (
                 <FormCard
                   setRefresh={setRefresh}
                   key={currentForm?.id}
