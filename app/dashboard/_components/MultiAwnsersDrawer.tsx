@@ -25,7 +25,7 @@ export default function MultiAwnsersDrawer({
               awnsers.map((awnser) => (
                 <div className="w-full h-96 text-center">
                   <p>{awnser.resposta}</p>
-                  <p>{awnser.vezesrespondidas?.toString()}</p>
+                  <p>{awnser.vezesrespondidas}</p>
 
                   <Separator className="border-t-1 border-black/50 w-1/2 justify-self-center" />
                 </div>

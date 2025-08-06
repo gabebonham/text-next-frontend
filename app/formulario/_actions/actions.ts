@@ -24,23 +24,34 @@ export async function sendAction(awnser: AwnserEntity) {
     return false
   }
 }
-export async function createMultiAwnser(awnserId: string, questionId: string) {
+export async function createMultiAwnser(
+  multiAwnser: any[],
+  questionId: string,
+) {
+  console.log('aa')
   try {
-    const body = {
-      idpergunta: questionId,
-      idresposta: awnserId,
-    }
     const backendUrl = process.env.BACKEND_URL
-    const response = await fetch(`${backendUrl}/respostas-perguntas`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
+
+    const requests = multiAwnser.map((awnser) => {
+      const body = {
+        idpergunta: questionId,
+        idopcaoresposta: awnser.id,
+      }
+      console.log(body)
+
+      return fetch(`${backendUrl}/respostas-perguntas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
     })
+
+    await Promise.all(requests)
     return true
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return false
   }
 }

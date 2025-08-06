@@ -49,8 +49,12 @@ export default function QuestionToAwnser({
     let result = false
 
     if (send && error === '') {
-      if (id) {
-        result = await createMultiAwnser(id, question.id)
+      if (
+        question.tipopergunta == 'multi' ||
+        question.tipopergunta == 'single' ||
+        question.tipopergunta == 'y/n'
+      ) {
+        result = await createMultiAwnser(multiAwnser, question.id)
       } else {
         result = await sendAction(data)
       }
@@ -132,18 +136,12 @@ export default function QuestionToAwnser({
                   <Checkbox
                     className="size-6 mt-1 "
                     id={`${question.id}${resposta.resposta}`}
-                    checked={handleCheckMultiAwnser(
-                      `${question.id}${resposta.resposta}`,
-                    )}
+                    checked={handleCheckMultiAwnser(`${resposta.id}`)}
                     onCheckedChange={() =>
-                      handleCheckMultiAwnser(
-                        `${question.id}${resposta.resposta}`,
-                      )
-                        ? handleRemoveMultiAwnser(
-                            `${question.id}${resposta.resposta}`,
-                          )
+                      handleCheckMultiAwnser(`${resposta.id}`)
+                        ? handleRemoveMultiAwnser(`${resposta.id}`)
                         : handleAddMultiAwnser(
-                            `${question.id}${resposta.resposta}`,
+                            `${resposta.id}`,
                             resposta.resposta,
                           )
                     }
@@ -172,8 +170,7 @@ export default function QuestionToAwnser({
                     id={`${question.id}${resposta.resposta}`}
                     checked={awnser == resposta.resposta}
                     onCheckedChange={() =>
-                      awnser != resposta.resposta &&
-                      setAwnser(resposta.resposta)
+                      awnser != resposta.resposta && setAwnser(resposta.id)
                     }
                   />
                 </div>
