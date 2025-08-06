@@ -6,9 +6,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useEffect, useState } from 'react'
-import { sendAction } from '../_actions/actions'
+import { createMultiAwnser, sendAction } from '../_actions/actions'
 import AwnserEntity from '@/app/_entities/AwnserEntity'
-
+interface MultiAwnser {
+  id: string
+  content: string
+}
 export default function QuestionToAwnser({
   question,
   send,
@@ -19,6 +22,7 @@ export default function QuestionToAwnser({
   setSent: (value: boolean) => void
 }) {
   const [awnser, setAwnser] = useState<string>('')
+  const [multiAwnser, setMultiAwnser] = useState<MultiAwnser[]>([])
   const [openQuestion, setOpenQuestion] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
   const data = {
@@ -27,11 +31,19 @@ export default function QuestionToAwnser({
     resposta: awnser,
     ordem: question.ordem,
   } as AwnserEntity
-  const sendHandler = async () => {
-    if (question.tipopergunta == 'text' || question.tipopergunta == 'multi')
+  const sendHandler = async (id?: string) => {
+    if (question.tipopergunta == 'text' || question.tipopergunta == 'multi') {
       setOpenQuestion(true)
-    if (error == '' && send) {
-      const result = await sendAction(data)
+    }
+    if (question.tipopergunta == 'single' || question.tipopergunta == 'multi') {
+      let result
+      if (error == '' && send) {
+        result = await sendAction(data)
+      } else if (id) {
+        result = await createMultiAwnser(id, question.id)
+      } else {
+        result = false
+      }
       setSent(result)
     }
   }
@@ -58,7 +70,9 @@ export default function QuestionToAwnser({
         <h4 className="text-red-500">{error && error}</h4>
         <div className="flex items-center justify-start gap-x-24">
           <div className="flex items-center gap-x-3">
-            <Label className="text-3xl ">Sim</Label>
+            <Label htmlFor={`${question.id}yes`} className="text-3xl ">
+              Sim
+            </Label>
 
             <Checkbox
               className="size-6 mt-1 "
@@ -68,7 +82,9 @@ export default function QuestionToAwnser({
             />
           </div>
           <div className="flex items-center gap-x-3">
-            <Label className="text-3xl ">Não</Label>
+            <Label htmlFor={`${question.id}no`} className="text-3xl ">
+              Não
+            </Label>
             <Checkbox
               className="size-6 mt-1 "
               id={`${question.id}no`}
@@ -79,8 +95,80 @@ export default function QuestionToAwnser({
         </div>
       </div>
     )
-  if (question.tipopergunta == 'multi') return <div>multi</div>
-  if (question.tipopergunta == 'single') return <div>single</div>
+  const handleAddMultiAwnser = (id: string, content: string) => {
+    setMultiAwnser([...multiAwnser, { id, content }])
+  }
+  const handleRemoveMultiAwnser = (id: string) => {
+    const newList = multiAwnser.filter((awn) => awn.id != id)
+    setMultiAwnser(newList)
+  }
+  const handleCheckMultiAwnser = (id: string): boolean => {
+    return multiAwnser.map((awn) => awn.id).includes(id)
+  }
+  if (question.tipopergunta == 'multi')
+    return (
+      <div>
+        <div className="space-y-4">
+          {header()}
+          <div className="flex items-center justify-start gap-x-24">
+            <div className="grid grid-cols-2 gap-8">
+              {question.respostas.map((resposta) => (
+                <div className="flex items-center gap-x-3">
+                  <Label className="text-3xl ">{resposta.resposta}</Label>
+                  <Checkbox
+                    className="size-6 mt-1 "
+                    id={`${question.id}${resposta.resposta}`}
+                    checked={handleCheckMultiAwnser(
+                      `${question.id}${resposta.resposta}`,
+                    )}
+                    onCheckedChange={() =>
+                      handleCheckMultiAwnser(
+                        `${question.id}${resposta.resposta}`,
+                      )
+                        ? handleRemoveMultiAwnser(
+                            `${question.id}${resposta.resposta}`,
+                          )
+                        : handleAddMultiAwnser(
+                            `${question.id}${resposta.resposta}`,
+                            resposta.resposta,
+                          )
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  if (question.tipopergunta == 'single')
+    return (
+      <div>
+        <div className="space-y-4">
+          {header()}
+          <div className="flex items-center justify-start gap-x-24">
+            <div className="grid grid-cols-2 gap-8">
+              {question.respostas.map((resposta) => (
+                <div className="flex items-center gap-x-3">
+                  <Label htmlFor={`${question.id}no`} className="text-3xl ">
+                    {resposta.resposta}
+                  </Label>
+                  <Checkbox
+                    className="size-6 mt-1 "
+                    id={`${question.id}${resposta.resposta}`}
+                    checked={awnser == resposta.resposta}
+                    onCheckedChange={() =>
+                      awnser != resposta.resposta &&
+                      setAwnser(resposta.resposta)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   if (question.tipopergunta == 'text')
     return (
       <div className="space-y-4">

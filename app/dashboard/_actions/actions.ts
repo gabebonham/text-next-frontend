@@ -1,5 +1,7 @@
 'use server'
 
+import AwnserEntity from '@/app/_entities/AwnserEntity'
+
 export async function createEmptyQuestion(formId: string) {
   try {
     const body = {
@@ -89,6 +91,34 @@ export async function updateForm(formData: FormData) {
         body: JSON.stringify(body),
       },
     )
+  } catch (e) {
+    console.log(e)
+  }
+}
+export async function createResposta(awnser: AwnserEntity) {
+  try {
+    const backendUrl = process.env.BACKEND_URL
+    const response = await fetch(`${backendUrl}/respostas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(awnser),
+    })
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export async function deleteResposta(id: string) {
+  try {
+    const backendUrl = process.env.BACKEND_URL
+    const response = await fetch(`${backendUrl}/respostas/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
   } catch (e) {
     console.log(e)
   }

@@ -14,6 +14,9 @@ import SelectComponent from './SelectComponent'
 import { XCircle } from 'lucide-react'
 import AwnsersDrawer from './AwnsersDrawer'
 import Link from 'next/link'
+import AwnserEntity from '@/app/_entities/AwnserEntity'
+import MultiAlternativeAwnserComponent from './MultiAlternativeAwnsersComponent'
+import MultiAwnsersDrawer from './MultiAwnsersDrawer'
 
 export default function FormQuestionCardComponent({
   question,
@@ -148,6 +151,15 @@ export default function FormQuestionCardComponent({
                 <Label htmlFor={`${question.id}dec`}>Numero Decimal</Label>
               </div>
             </div>
+            <div>
+              {type == 'multi' ||
+                (type == 'single' && (
+                  <MultiAlternativeAwnserComponent
+                    respostas={question.respostas}
+                    questionId={question.id}
+                  />
+                ))}
+            </div>
           </div>
         </div>
         <Separator className="border-t-1 border-blue-800/30 w-full self-center" />
@@ -166,7 +178,13 @@ export default function FormQuestionCardComponent({
           >
             Salvar
           </Button>
-          <AwnsersDrawer awnsers={question.respostas} />
+          {question.tipopergunta == 'multi' ||
+          question.tipopergunta == 'single' ||
+          question.tipopergunta == 'y/n' ? (
+            <MultiAwnsersDrawer awnsers={question.respostas} />
+          ) : (
+            <AwnsersDrawer awnsers={question.respostas} />
+          )}
         </div>
       </form>
     </Card>

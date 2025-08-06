@@ -35,22 +35,20 @@ export default function SelectedFormCard({
     selectedForm.perguntas,
   )
   const [order, setOrder] = useState<number>(selectedForm.ordem)
-  const getNewQuestion = async () => {
-    await createEmptyQuestion(selectedForm.id)
-    const questionsRes = (await fetch(
-      `/api/forms/${selectedForm?.id}/questions`,
-    ).then((r) => r.json())) as QuestionEntity[]
+  const getNewQuestion = async (id: string) => {
+    await createEmptyQuestion(id)
+    const questionsRes = (await fetch(`/api/forms/${id}/questions`).then((r) =>
+      r.json(),
+    )) as QuestionEntity[]
     setQuestions(questionsRes)
   }
   const getQuestions = async () => {
     const questionsRes = (await fetch(
-      `/api/forms/${selectedForm?.id}/questions`,
+      `/api/forms/${selectedForm.id}/questions`,
     ).then((r) => r.json())) as QuestionEntity[]
     setQuestions(questionsRes)
   }
-  useEffect(() => {
-    setQuestions(selectedForm.perguntas)
-  }, [selectedForm, refresh])
+  useEffect(() => {}, [selectedForm, refresh])
   return (
     <Card className="w-full h-full">
       <CardContent>
@@ -88,7 +86,7 @@ export default function SelectedFormCard({
         <div className="py-4 flex items-center gap-x-8">
           <Input type="hidden" name="formId" value={selectedForm.id ?? ''} />
           <Button
-            onClick={() => getNewQuestion()}
+            onClick={() => getNewQuestion(selectedForm.id)}
             className="bg-blue-400 cursor-pointer text-xl py-6 px-6"
           >
             Adicionar Pergunta
@@ -101,7 +99,7 @@ export default function SelectedFormCard({
           </Link>
         </div>
         <CardDescription className="space-y-6 ">
-          {questions.map((question: QuestionEntity) => (
+          {questions?.map((question: QuestionEntity) => (
             <FormQuestionCardComponent
               getNewQuestion={getQuestions}
               refresh={refresh}
