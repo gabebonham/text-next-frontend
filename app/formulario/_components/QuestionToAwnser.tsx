@@ -12,9 +12,11 @@ import AwnserEntity from '@/app/_entities/AwnserEntity'
 export default function QuestionToAwnser({
   question,
   send,
+  setSent,
 }: {
   question: QuestionEntity
   send: boolean
+  setSent: (value: boolean) => void
 }) {
   const [awnser, setAwnser] = useState<string>('')
   const [openQuestion, setOpenQuestion] = useState<boolean>(false)
@@ -23,22 +25,26 @@ export default function QuestionToAwnser({
     respostaaberta: openQuestion,
     idpergunta: question.id,
     resposta: awnser,
+    ordem: question.ordem,
   } as AwnserEntity
   const sendHandler = async () => {
     if (question.tipopergunta == 'text' || question.tipopergunta == 'multi')
       setOpenQuestion(true)
-    if (error == '') await sendAction(data)
+    if (error == '' && send) {
+      const result = await sendAction(data)
+      setSent(result)
+    }
   }
   useEffect(() => {
     sendHandler()
   }, [send])
   const header = () => {
     return (
-      <div>
-        <h1>{question.titulo}</h1>
+      <div className="text-3xl space-y-4">
+        <h1 className="text-5xl text-black">{question.titulo}</h1>
         <h4>{question.subpergunta}</h4>
-        <h4>{question.orientacaoresposta}</h4>
-        <h4 className="text-red-500">
+        <h4 className="text-2xl">{question.orientacaoresposta}</h4>
+        <h4 className="text-red-500 text-2xl">
           {question.obrigatoria && 'Pergunta Obrigatória*'}
         </h4>
       </div>
@@ -47,24 +53,26 @@ export default function QuestionToAwnser({
 
   if (question.tipopergunta == 'y/n')
     return (
-      <div>
+      <div className="space-y-4">
         {header()}
         <h4 className="text-red-500">{error && error}</h4>
         <div className="flex items-center justify-start gap-x-24">
-          <div>
-            <Label>Sim</Label>
+          <div className="flex items-center gap-x-3">
+            <Label className="text-3xl ">Sim</Label>
 
             <Checkbox
+              className="size-6 mt-1 "
               id={`${question.id}yes`}
-              checked={awnser == 'yes'}
+              checked={awnser == 'Sim'}
               onCheckedChange={() => awnser != 'Sim' && setAwnser('Sim')}
             />
           </div>
-          <div>
-            <Label>Não</Label>
+          <div className="flex items-center gap-x-3">
+            <Label className="text-3xl ">Não</Label>
             <Checkbox
+              className="size-6 mt-1 "
               id={`${question.id}no`}
-              checked={awnser == 'no'}
+              checked={awnser == 'Não'}
               onCheckedChange={() => awnser != 'Não' && setAwnser('Não')}
             />
           </div>
@@ -75,9 +83,9 @@ export default function QuestionToAwnser({
   if (question.tipopergunta == 'single') return <div>single</div>
   if (question.tipopergunta == 'text')
     return (
-      <div>
+      <div className="space-y-4">
         {header()}
-        <h4 className="text-red-500">{error && error}</h4>
+        <h4 className="text-red-500 py-4">{error && error}</h4>
         <div className="flex items-center justify-start gap-x-24">
           <div>
             <Textarea
@@ -89,19 +97,23 @@ export default function QuestionToAwnser({
       </div>
     )
   const handleIntAwnser = (inp: string) => {
-    try {
-      parseInt(inp)
-      setAwnser(inp)
-      setError('')
-    } catch (e) {
+    if (inp == '') {
+      setAwnser('')
+      return
+    }
+    const parsed = parseInt(inp)
+    if (isNaN(parsed)) {
       setError('Entrada inválida')
+    } else {
+      setAwnser(parsed.toString())
+      setError('')
     }
   }
   if (question.tipopergunta == 'int')
     return (
       <div>
         {header()}
-        <h4 className="text-red-500">{error && error}</h4>
+        <h4 className="text-red-500 py-4">{error && error}</h4>
         <div className="flex items-center justify-start gap-x-24">
           <div>
             <Input
@@ -113,19 +125,34 @@ export default function QuestionToAwnser({
       </div>
     )
   const handleDecAwnser = (inp: string) => {
-    try {
-      const parsedInp = parseFloat(inp).toFixed(2)
-      setAwnser(parsedInp.toString())
-      setError('')
-    } catch (e) {
-      setError('Entrada inválida')
+    if (inp === '') {
+      setAwnser('')
+      return
     }
+
+    const cleaned = inp.replace(/\D/g, '')
+
+    if (cleaned === '') {
+      setAwnser('')
+      setError('')
+      return
+    }
+
+    const number = parseFloat(cleaned) / 100
+
+    const formatted = number.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+
+    setAwnser(formatted)
+    setError('')
   }
   if (question.tipopergunta == 'dec')
     return (
       <div>
         {header()}
-        <h4 className="text-red-500">{error && error}</h4>
+        <h4 className="text-red-500 py-4">{error && error}</h4>
         <div className="flex items-center justify-start gap-x-24">
           <div>
             <Input

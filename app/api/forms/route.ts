@@ -1,3 +1,5 @@
+import { json } from 'stream/consumers'
+
 export async function GET() {
   try {
     const backendUrl = process.env.BACKEND_URL
@@ -33,7 +35,7 @@ export async function PUT(req: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-    })
+    }).then((r) => r.json())
     return Response.json(response)
   } catch (e) {
     return Response.json({ error: e })

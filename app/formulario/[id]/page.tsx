@@ -24,6 +24,7 @@ export default function FormPage() {
   const id = params.id as string
   const [selectedForm, setForm] = useState<FormEntity | undefined>()
   const [send, setSend] = useState<boolean>(false)
+  const [sent, setSent] = useState<boolean>(false)
   const handleGet = async () => {
     const res = await fetch(`/api/forms/${id}`).then((r) => r.json())
     setForm(res)
@@ -31,6 +32,14 @@ export default function FormPage() {
   useEffect(() => {
     handleGet()
   }, [])
+  if (sent)
+    return (
+      <div className="w-full bg-blue-200 min-h-screen px-96 py-12">
+        <div>
+          <Card className="w-full h-full text-center text-4xl"> Enviado!</Card>
+        </div>
+      </div>
+    )
   return (
     <div className="w-full bg-blue-200 min-h-screen px-96 py-12">
       <div>
@@ -49,7 +58,11 @@ export default function FormPage() {
 
             <CardDescription className="space-y-6 ">
               {selectedForm?.perguntas?.map((question: QuestionEntity) => (
-                <QuestionToAwnser send={send} question={question} />
+                <QuestionToAwnser
+                  setSent={setSent}
+                  send={send}
+                  question={question}
+                />
               ))}
             </CardDescription>
           </CardContent>

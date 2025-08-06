@@ -42,6 +42,12 @@ export default function SelectedFormCard({
     ).then((r) => r.json())) as QuestionEntity[]
     setQuestions(questionsRes)
   }
+  const getQuestions = async () => {
+    const questionsRes = (await fetch(
+      `/api/forms/${selectedForm?.id}/questions`,
+    ).then((r) => r.json())) as QuestionEntity[]
+    setQuestions(questionsRes)
+  }
   useEffect(() => {
     setQuestions(selectedForm.perguntas)
   }, [selectedForm, refresh])
@@ -97,6 +103,7 @@ export default function SelectedFormCard({
         <CardDescription className="space-y-6 ">
           {questions.map((question: QuestionEntity) => (
             <FormQuestionCardComponent
+              getNewQuestion={getQuestions}
               refresh={refresh}
               setRefresh={setRefresh}
               key={question.id}

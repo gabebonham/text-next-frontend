@@ -10,7 +10,7 @@ export async function GET(
       headers: {
         'Content-Type': 'application/json',
       },
-    })
+    }).then((r) => r.json())
     return Response.json(response)
   } catch (e) {
     return Response.json({ error: e })

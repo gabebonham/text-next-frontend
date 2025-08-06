@@ -13,6 +13,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@radix-ui/react-select'
 
 export default function AwnsersDrawer({
   awnsers,
@@ -28,16 +29,17 @@ export default function AwnsersDrawer({
       </DrawerTrigger>
       <DrawerContent className="max-h-[800px]">
         <ScrollArea className="max-h-[800px] overflow-y-auto rounded-2xl">
-          <div>
+          <div className="">
             {awnsers ? (
               awnsers.map((awnser) => (
-                <div>
-                  <p>{awnser.resposta}</p>
+                <div className="w-full h-96 text-center">
+                  <p>{awnser.resposta.toString()}</p>
                   <p>
                     {awnser.respostaaberta
                       ? 'Pergunta aberta'
                       : 'Pergunta não aberta'}
                   </p>
+                  <Separator className="border-t-1 border-black/50 w-1/2 justify-self-center" />
                 </div>
               ))
             ) : (

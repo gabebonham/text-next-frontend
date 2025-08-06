@@ -1,3 +1,4 @@
+'use server'
 import AwnserEntity from '@/app/_entities/AwnserEntity'
 
 export async function sendAction(awnser: AwnserEntity) {
@@ -5,6 +6,7 @@ export async function sendAction(awnser: AwnserEntity) {
     const body = {
       idpergunta: awnser.idpergunta,
       resposta: awnser.resposta,
+      ordem: awnser.ordem,
       respostaaberta: awnser.respostaaberta,
     }
     const backendUrl = process.env.BACKEND_URL
@@ -15,7 +17,9 @@ export async function sendAction(awnser: AwnserEntity) {
       },
       body: JSON.stringify(body),
     })
+    return true
   } catch (e) {
     console.log(e)
+    return false
   }
 }

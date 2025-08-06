@@ -20,11 +20,13 @@ export default function FormQuestionCardComponent({
   questionsLength,
   refresh,
   setRefresh,
+  getNewQuestion,
 }: {
   question: QuestionEntity
   questionsLength: number
   refresh: boolean
   setRefresh: (value: boolean) => void
+  getNewQuestion: () => void
 }) {
   const [required, setRequired] = useState<boolean>(question.obrigatoria)
   const [type, setType] = useState<string>(question.tipopergunta)
@@ -36,6 +38,7 @@ export default function FormQuestionCardComponent({
         'Content-Type': 'application/json',
       },
     })
+    getNewQuestion()
     setRefresh(!refresh)
   }
   return (
@@ -138,11 +141,11 @@ export default function FormQuestionCardComponent({
               </div>
               <div className="flex items-center gap-x-2">
                 <Checkbox
-                  id="dec"
+                  id={`${question.id}dec`}
                   checked={type == 'dec'}
                   onCheckedChange={() => type != 'dec' && setType('dec')}
                 />
-                <Label htmlFor="dec">Numero Decimal</Label>
+                <Label htmlFor={`${question.id}dec`}>Numero Decimal</Label>
               </div>
             </div>
           </div>
@@ -156,6 +159,10 @@ export default function FormQuestionCardComponent({
           <Button
             type="submit"
             className="bg-blue-400 cursor-pointer text-xl py-6 px-6"
+            onClick={() => {
+              setRefresh(!refresh)
+              getNewQuestion()
+            }}
           >
             Salvar
           </Button>

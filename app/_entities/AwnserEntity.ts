@@ -3,5 +3,6 @@ export default interface AwnserEntity {
   idpergunta: string
   resposta: string
   respostaaberta: boolean
+  ordem: number
   createdat: string
 }
