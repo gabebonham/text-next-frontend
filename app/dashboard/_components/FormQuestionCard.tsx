@@ -152,13 +152,12 @@ export default function FormQuestionCardComponent({
               </div>
             </div>
             <div>
-              {type == 'multi' ||
-                (type == 'single' && (
-                  <MultiAlternativeAwnserComponent
-                    respostas={question.respostas}
-                    questionId={question.id}
-                  />
-                ))}
+              {(type == 'multi' || type == 'single' || type == 'y/n') && (
+                <MultiAlternativeAwnserComponent
+                  respostas={question.respostas}
+                  questionId={question.id}
+                />
+              )}
             </div>
           </div>
         </div>

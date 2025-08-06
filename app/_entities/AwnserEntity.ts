@@ -4,6 +4,6 @@ export default interface AwnserEntity {
   resposta: string
   respostaaberta: boolean
   ordem: number
-  quantidade?: number
+  vezesrespondidas?: number
   createdat: string
 }

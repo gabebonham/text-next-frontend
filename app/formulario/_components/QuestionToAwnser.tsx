@@ -25,30 +25,44 @@ export default function QuestionToAwnser({
   const [multiAwnser, setMultiAwnser] = useState<MultiAwnser[]>([])
   const [openQuestion, setOpenQuestion] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
-  const data = {
-    respostaaberta: openQuestion,
-    idpergunta: question.id,
-    resposta: awnser,
-    ordem: question.ordem,
-  } as AwnserEntity
-  const sendHandler = async (id?: string) => {
+
+  const sendHandler = async ({
+    id,
+    value,
+  }: {
+    id?: string
+    value?: string
+  }) => {
+    if (!question) return
+
     if (question.tipopergunta == 'text' || question.tipopergunta == 'multi') {
       setOpenQuestion(true)
     }
-    if (question.tipopergunta == 'single' || question.tipopergunta == 'multi') {
-      let result
-      if (error == '' && send) {
-        result = await sendAction(data)
-      } else if (id) {
+
+    const data = {
+      respostaaberta: openQuestion,
+      idpergunta: question.id,
+      resposta: value ?? awnser,
+      ordem: question.ordem,
+    } as AwnserEntity
+
+    let result = false
+
+    if (send && error === '') {
+      if (id) {
         result = await createMultiAwnser(id, question.id)
       } else {
-        result = false
+        result = await sendAction(data)
       }
-      setSent(result)
     }
+
+    setSent(result)
   }
+
   useEffect(() => {
-    sendHandler()
+    if (send) {
+      sendHandler({ value: awnser })
+    }
   }, [send])
   const header = () => {
     return (

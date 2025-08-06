@@ -9,6 +9,7 @@ export async function sendAction(awnser: AwnserEntity) {
       ordem: awnser.ordem,
       respostaaberta: awnser.respostaaberta,
     }
+    console.log(awnser)
     const backendUrl = process.env.BACKEND_URL
     const response = await fetch(`${backendUrl}/respostas`, {
       method: 'POST',

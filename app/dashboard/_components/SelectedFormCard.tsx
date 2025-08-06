@@ -73,7 +73,10 @@ export default function SelectedFormCard({
                 defaultValue={selectedForm.titulo ?? ''}
                 name="title"
               />
-              <Textarea defaultValue={selectedForm.descricao ?? ''} />
+              <Textarea
+                name="description"
+                defaultValue={selectedForm.descricao ?? ''}
+              />
               <Button
                 type="submit"
                 className="bg-blue-400 cursor-pointer text-xl py-6 px-6"

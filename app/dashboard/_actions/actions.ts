@@ -1,6 +1,7 @@
 'use server'
 
 import AwnserEntity from '@/app/_entities/AwnserEntity'
+import { The_Nautigal } from 'next/font/google'
 
 export async function createEmptyQuestion(formId: string) {
   try {
@@ -104,6 +105,18 @@ export async function createResposta(awnser: AwnserEntity) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(awnser),
+    }).then((r) => r.json())
+    console.log(response)
+    const body = {
+      idpergunta: awnser.idpergunta,
+      idopcaoresposta: awnser.id,
+    }
+    const res = await fetch(`${backendUrl}/respostas-perguntas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     })
   } catch (e) {
     console.log(e)
